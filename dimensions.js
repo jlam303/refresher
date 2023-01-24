@@ -1000,8 +1000,9 @@ let input = `3x11x24
 14x6x11
 `
 let totalV =0;
-let paper=0;
-let length=0;
+let paperV=0;
+let lengthV=0;
+let ribbonV=0;
 let dimensions = input.split(/[\nx]/)
 let params=["l","w","h"]
 class Box{
@@ -1019,11 +1020,22 @@ class Box{
         sorted.sort((a,b) =>{
             return a-b;
         })
-        this.min = Math.min(((2*Number(sorted[0])) + Number(sorted[2])),((2*Number(sorted[1])) + Number((2*sorted[0]))))
-        paper += ( (2*Number(sorted[0])) + Number(sorted[2])) * ((2*Number(sorted[1])) + Number((2*sorted[0])))
+        paperV += ( (2*Number(sorted[0])) + Number(sorted[2])) * ((2*Number(sorted[1])) + Number((2*sorted[0])))
     }
     addLength(){
-        length += this.min
+        let sorted = [this.l,this.w,this.h]
+        sorted.sort((a,b) =>{
+            return a-b;
+        })
+        this.min = Math.min(((2*Number(sorted[0])) + Number(sorted[2])),((2*Number(sorted[1])) + Number((2*sorted[0]))))
+        lengthV += this.min
+    }
+    addRibbon(){
+        let sorted = [this.l,this.w,this.h]
+        sorted.sort((a,b) =>{
+            return a-b;
+        })
+        ribbonV += (Number(sorted[0])+Number(sorted[1])+Number(sorted[0])+Number(sorted[1])) + (Number(sorted[0])+Number(sorted[2])+Number(sorted[0])+Number(sorted[2])) + (Number(sorted[0])*Number(sorted[2])*Number(sorted[1]))
     }
 }
 let boxes =[]
@@ -1032,11 +1044,31 @@ for(let i = 0;i<dimensions.length;i+=3){
     boxes.push(temp)
 }
 boxes.pop()
-for(let i = 0;i<boxes.length;i++){
-    boxes[i].addVol();
-    boxes[i].addPaper();
-    boxes[i].addLength();
+function volF(){
+    for(let i = 0;i<boxes.length;i++){
+        boxes[i].addVol(); 
+    }
+    document.getElementById("mainVal").innerHTML = "Value: "+ totalV + " feet^3"
+    totalV = 0;          
 }
-console.log(totalV)
-console.log(paper)
-console.log(length)
+function paperF(){
+    for(let i = 0;i<boxes.length;i++){
+        boxes[i].addPaper();
+    }
+    document.getElementById("mainVal").innerHTML = "Value: "+ paperV + " feet^2"
+    paperV = 0;
+}
+function lengthF(){
+    for(let i = 0;i<boxes.length;i++){
+        boxes[i].addLength();
+    }
+    document.getElementById("mainVal").innerHTML = "Value: "+ lengthV  + " feet"
+    lengthV=0;
+}
+function ribbonF(){
+    for(let i = 0;i<boxes.length;i++){
+        boxes[i].addRibbon();
+    }
+    document.getElementById("mainVal").innerHTML = "Value: "+ ribbonV  + " feet"
+    ribbonV = 0
+}
